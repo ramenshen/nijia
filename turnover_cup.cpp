@@ -5,6 +5,8 @@ struct node {
 };
 struct node_array {
 	int level;
+	int father;
+	int mother;
 	struct node* n;
 };
 using namespace std;
@@ -12,6 +14,21 @@ int g_current_level=0;
 int g_node_num = 0;
 struct node_array level_node_array[1000];
 void print_level_node_array(int once, int total);
+void print_found_path(int level_node_index,int node_index,int total, int once) {
+	int i = 0;
+	if (level_node_index == -1)
+		return;
+	//for (i = 0; i < once + 1; i++) {
+	//	if ((level_node_array[level_node_index].n[i].x + level_node_array[level_node_index].n[i].y) == total)
+			cout << "(" << level_node_array[level_node_index].n[node_index].x << "," << level_node_array[level_node_index].n[node_index].y << ")" << " ";
+
+	//}
+	if (level_node_array[level_node_index].father != -1)
+		cout << "<-----";
+	else
+		cout << endl;
+	print_found_path(level_node_array[level_node_index].father, level_node_array[level_node_index].mother,total,once);
+}
 void start_turnover_cups(int level,int total,int once) {
 	int i = 0;
 	int level_node_array_index = 0;
@@ -37,6 +54,8 @@ void start_turnover_cups(int level,int total,int once) {
 				if (!malloc_flag) {
 					g_node_num++;
 					level_node_array[g_node_num].level = level + 1;
+					level_node_array[g_node_num].father = level_node_array_index;
+  					level_node_array[g_node_num].mother = node_array_index;
 					level_node_array[g_node_num].n = new node[once + 1];
 					memset(level_node_array[g_node_num].n, 0, sizeof(node)*(once + 1));
 					malloc_flag = 1;
@@ -46,6 +65,7 @@ void start_turnover_cups(int level,int total,int once) {
 				if (level_node_array[g_node_num].n[i].x == 0) {
 					cout << "found!!!!" << endl;
 					print_level_node_array(total, once);
+					print_found_path(g_node_num,i,total,once);					
 					return;
 				}
 			}
@@ -71,6 +91,8 @@ void print_level_node_array(int total,int once) {
 		if (level_node_array[level_node_array_index].level== -1)
 			break;
 		cout << "Level " << level_node_array[level_node_array_index].level << ":";
+		cout << "Father " << level_node_array[level_node_array_index].father<< ":";
+		cout << "Mother " << level_node_array[level_node_array_index].mother << ":";
 		int i = 0;
 		for (i = 0; i < once + 1; i++) {
 			if ((level_node_array[level_node_array_index].n[i].x + level_node_array[level_node_array_index].n[i].y) == total)
@@ -88,6 +110,8 @@ void init_level_node_array() {
 	//memset(level_node_array, 0, sizeof(level_node_array));
 	while (level_node_array_index < sizeof(level_node_array) / sizeof(struct node_array)) {
 		level_node_array[level_node_array_index].level = -1;
+		level_node_array[level_node_array_index].father = -1;
+		level_node_array[level_node_array_index].mother = -1;
 		level_node_array[level_node_array_index].n = NULL;
 		level_node_array_index++;
 	}
@@ -102,5 +126,5 @@ int main() {
 	cout << "Pleae input the number of turn over once time:";
 	cin >> cups_tureover_num_once;
 	init_turnover_cups(cups_total_num, cups_tureover_num_once);
-	system("pause");
+	 system("pause");
 }
