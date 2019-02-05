@@ -1,13 +1,25 @@
 #include <iostream>
 using namespace std;
+#define USING_ENUM 
 #define PI 3.1415926
 #define COLOR_RED "\033[31m"
 #define COLOR_GREEN "\033[32m"
 #define DEBUG_OUTPUT_LINE cout<<__FILE__<<" "<<COLOR_GREEN<<__FUNCTION__<<"\033[0m"<<" "<<__LINE__<<endl;
+enum SUBJECT{
+	SUBJECT_CHINESE,
+	SUBJECT_MATH,
+	SUBJECT_ENGLISH,
+	SUBJECT_BIOLOGY,	
+	SUBJECT_MAX
+};
+enum SEX{
+	SEX_MAN,
+	SEX_WOMAN,
+	SEX_MAX
+};
 class Student{
 private:
-	int sex;
-	
+	int sex; 	
 public:
 	Student(){
 		DEBUG_OUTPUT_LINE;	
@@ -21,6 +33,8 @@ public:
 		this->sex = sex;
 		this->age = age;
 	}
+#if 1
+#else	
 	Student(int sex,int age,int chinese){
 		DEBUG_OUTPUT_LINE
 		this->sex = sex;
@@ -42,9 +56,9 @@ public:
 		this->maths = maths;
 		this->english = english;
 	}
+#endif	
 	int age;
-	int getSex()
-	{
+	int getSex(){
 		DEBUG_OUTPUT_LINE;
 		return this->sex;
 	}
@@ -54,72 +68,83 @@ public:
 	int setSex(int sex){
 		this->sex=sex;
 	}
+#if 1
+	int subject[SUBJECT_MAX];
+	void setSubject(int _score,int _subject){
+		subject[_subject] = _score;
+	}
+	int getSubject(int _subject){
+		return subject[_subject];
+	}
+	int getTotalScore(){
+		DEBUG_OUTPUT_LINE;
+		int sum = 0;
+		for (int i = 0;i < SUBJECT_MAX;i++)
+		{
+			sum = sum + subject[i];
+	    }
+	    return sum;
+	}
+#else	
 	int chinese;
-	int setChinese(int chinese)
-	{
+	int setChinese(int chinese){
 		this->chinese = chinese;
 	}
-	int getChinese()
-	{
+	int getChinese(){
 		return this->chinese;
 	}
 	int maths;
-	int setMaths(int maths)
-	{
+	int setMaths(int maths){
 		this->maths = maths;
 	}
 	int getMaths(){
 		return maths;
 	}
 	int english;
-	int setEnglish(int english)
-	{
+	int setEnglish(int english){
 		this->english = english;
 	}
 	int getEnglish(){
 		return english;
 	}
+
 	int totalScore;
 	int setTotalScore(){
 		this->chinese = chinese;
 		this->maths = maths;
 		this->english = english;
 	}
-	int getTotalScore()
-	{
+	int getTotalScore(){
 		DEBUG_OUTPUT_LINE;
 		return chinese + maths + english;
 	}
+#endif		
 	int sum(int a,int b){
 		return a+b;
 	}
-
 	double sum(double a, double b){
 		return a+b;
 	}
-
 };
-int main(){
-	Student Bob(1);
-	Student max(1,12,100,100,150);
-	cout << "Max's sex is " << max.getSex()<< " Age is "<<max.age << endl;
+int main(){              
+	Student Bob(SEX_WOMAN);
+	Student max(SEX_MAN,12);
+	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+#if 1
+	max.setSubject(100,SUBJECT_CHINESE);
+	max.setSubject(100,SUBJECT_MATH);
+	max.setSubject(100,SUBJECT_ENGLISH);
+	max.setSubject(100,SUBJECT_BIOLOGY);
+	cout << "Max's chinese score  is " << max.getSubject(SUBJECT_CHINESE) << endl;
+	cout << "Max's maths score is " << max.getSubject(SUBJECT_MATH) << endl;
+	cout << "Max's english score is " << max.getSubject(SUBJECT_ENGLISH) << endl;
+	cout << "Max's biology score is " << max.getSubject(SUBJECT_BIOLOGY) << endl;
+	cout << "Max's total score is " << max.getTotalScore() << endl;
+#else	
 	cout << "Max's chinese is " << max.chinese<< endl;
 	cout << "Max's maths is " << max.maths<< endl;
 	cout << "Max's endlish is " << max.english<< endl;
 	cout << "Max's total score is " << max.getTotalScore()<< endl;
-	// Student max;
-	// max.setSex(1);
-	// max.setAge(11);
-	// max.setChinese(100);
-	// max.setEnglish(100);
-	// max.setMaths(150);
-	// cout<<"Max's age is "<<max.age<<endl;
-	// cout<<"Max's sex is "<<max.getSex()<<endl;
-	// cout << "Max's chinese score is " << max.getChinese() << endl;
-	// cout << "Max's maths score is " << max.getMaths() << endl;
-	// cout << "Max's chinese score is " << max.getEnglish() << endl;
-	// cout << "Max's total score is " << max.getTotalScore() << endl;
-	// cout << "Max's sum  is " << max.sum(1,2) << endl;
-	// cout << "Max's sum  is " << max.sum(1.0,2.0) << endl;
-	
+#endif	
 }
+
