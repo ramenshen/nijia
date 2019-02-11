@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ostream>
 using namespace std;
 #define USING_ENUM 
 #define PI 3.1415926
@@ -168,7 +169,24 @@ public:
 	int operator+=(Student a){
 		this->age += a.age;
 	}
+	friend ostream& operator<<(ostream& o,Student &a){
+			o<<"Age is "<<a.age << " Sex is "<<a.sex<<endl;
+	}
+	/*
+	modify the ostream source ode
+	ostream* operator<<(Student &a){
+
+	}
+	*/
+	friend void display(Student& a)
+	 {
+	 	cout<<"Age is "<<a.age<<" Sex is "<<a.sex<<endl;
+	 }
 };
+// void display(Student& a){
+// 	cout<<"Age is "<<a.age<<" Sex is "<<a.sex<<endl;
+// 	//cout<<"Age is "<<a.age<<endl;
+// }
 int main(){              
 	Student Bob(SEX_WOMAN,10);
 
@@ -201,5 +219,7 @@ int main(){
 	max+=Bob;//==>max.+=(Bob);
 	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	
+	display(max);
+	cout<<max<<endl;
 }
 
