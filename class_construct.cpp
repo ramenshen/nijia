@@ -13,12 +13,15 @@ enum SUBJECT{
 	SUBJECT_BIOLOGY,	
 	SUBJECT_MAX
 };
+
+class Student{
+public:
+typedef  int AGE_TYPE;
 enum SEX{
 	SEX_MAN,
 	SEX_WOMAN,
 	SEX_MAX
 };
-class Student{
 private:
 	int sex; 	
 public:
@@ -64,7 +67,7 @@ public:
 		this->english = english;
 	}
 #endif	
-	int age;
+	AGE_TYPE age;
 	int getSex()
 	{
 		DEBUG_OUTPUT_LINE;
@@ -188,10 +191,10 @@ public:
 // 	//cout<<"Age is "<<a.age<<endl;
 // }
 int main(){              
-	Student Bob(SEX_WOMAN,10);
-
-	Student max(SEX_MAN,12);
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	Student Bob(Student::SEX_WOMAN,10);
+	Student::AGE_TYPE max_age = 12;
+	Student max(Student::SEX_MAN,max_age);
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 #if 1
 	max.setSubject(100,SUBJECT_CHINESE);
 	max.setSubject(100,SUBJECT_MATH);
@@ -209,15 +212,15 @@ int main(){
 	cout << "Max's total score is " << max.getTotalScore()<< endl;
 #endif	
 	max++;
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	max--;
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	++max;
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	max+=1;//==>max.+=(1);
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	max+=Bob;//==>max.+=(Bob);
-	cout << "Max's sex is " << ((max.getSex()==SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
+	cout << "Max's sex is " << ((max.getSex()==Student::SEX_MAN)?"Boy":"Girl")<<" Age is "<<max.age << endl;
 	
 	display(max);
 	cout<<max<<endl;
