@@ -1,7 +1,4 @@
-﻿// huffleman_demo.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -10,80 +7,126 @@
 #include <stack>
 #include <map>
 #include <fstream>
+#define NOTLEAFNODE 0X7F
 using namespace std;
 char* hf_encode(char key);
-struct HFNode{
+struct HFNode {
 	char c;
 	int weight;
 	int code;
 	HFNode* lchild;
 	HFNode* rchild;
+	HFNode() {}
+	HFNode(char t) {
+		c = t;
+	}
+	bool operator()(const HFNode* a) {
+		return this->c == a->c;
+	}
 	bool operator==(const HFNode& t) {
 		return this->c == t.c;
 	}
-	friend ostream& operator<<(ostream& out,const HFNode& a) {
-		out <<setw(2)<<a.c << setw(4)<< a.weight << endl;
+	friend ostream& operator<<(ostream& out, const HFNode* a) {
+		out << setw(2) << a->c << setw(4) << a->weight << endl;
 		return out;
 	}
 };
-bool HFNode_cmp(const HFNode& a, const HFNode& b) {
-	return a.weight > b.weight;
+bool HFNode_cmp(const HFNode* a, const HFNode* b) {
+	return a->weight > b->weight;
 }
-vector<HFNode> v;
+vector<HFNode*> v;
 void readData() {
-	freopen("data.in","r",stdin);
+	freopen("data.in", "r", stdin);
 	char t;
 	while (cin.get(t)) {
-		vector<HFNode>::iterator result;
-		HFNode n;
-		n.c = t;
-		result = find(v.begin(), v.end(), n);
-		if (result == v.end()) {			
-			n.weight = 1;
-			n.lchild = NULL;
-			n.rchild = NULL;
+		vector<HFNode*>::iterator result;
+		HFNode* n=new HFNode;
+		n->c = t;
+		//result = find(v.begin(), v.end(), n);
+		result = find_if(v.begin(), v.end(), HFNode(t));
+		if (result == v.end()) {
+			n->weight = 1;
+			n->lchild = NULL;
+			n->rchild = NULL;
 			v.push_back(n);
 		}
 		else {
-			result->weight++;
+			(*result)->weight++;
 		}
 	}
-	sort(v.begin(), v.end(),HFNode_cmp);
-	copy(v.begin(), v.end(), ostream_iterator<HFNode>(cout, " "));
+	sort(v.begin(), v.end(), HFNode_cmp);
+	copy(v.begin(), v.end(), ostream_iterator<HFNode*>(cout, " "));
 	freopen("CON", "r", stdin);
 }
+map<char, string> encode_m;
+map<string, char> decode_m;
+
 void encodeData() {
 	char t;
 	ifstream fi("data.in");
-	freopen("data.out","w",stdout);
+	ofstream fo("data.out");
+	//freopen("data.out", "w", stdout);
 	while (fi.get(t)) {
-		cout << hf_encode(t);
+		int max_size = encode_m.max_size();
+		map<char, string>::iterator it = encode_m.find(t);
+		if (it != encode_m.end()) {	
+			cout << t << "has been encoded" << endl;
+			fo << it->second;
+		}
+		else {
+			cout << t << " is been encoded first time" << endl;
+			fo << hf_encode(t);
+		}
 	}
+	fi.close();
+	fo.close();
+}
+void decodeData() {
+	char t;
+	ifstream fi("data.out");
+	ofstream fo("data.out.decode");
+	//freopen("data.out", "w", stdout);
+	string s;
+	//6s.resize(0);
+	cout << decode_m["0"] << endl;
+	cout << decode_m["10"] << endl;
+	while (fi.get(t)) {
+		s.append(1, t);
+		cout <<"try to decode "<< s << endl;
+		map<string, char>::iterator it = decode_m.find(s);
+		if (it != decode_m.end()) {
+			cout << s << " ------> "<< it->second << endl;
+			fo << it->second;
+			s.clear();
+		}		
+	}
+	fi.close();
+	fo.close();
 }
 HFNode* root = NULL;
 void buildHFTree() {
 	if (v.size() >= 2) {
 		int size = v.size();
-		HFNode *t1, *t2;
-		t1 = new HFNode;
-		t1->c = v[size - 1].c;
-		t1->weight = v[size - 1].weight;
+		HFNode* t1, * t2;
+		t1 = v[size - 1];
+		//t1->c = v[size - 1]->c;
+		//t1->weight = v[size - 1]->weight;
 		t1->code = 1;
-		t1->lchild = v[size - 1].lchild;
-		t1->rchild = v[size - 1].rchild;
+		//t1->lchild = v[size - 1]->lchild;
+		//t1->rchild = v[size - 1]->rchild;
 		v.pop_back();
-		t2 = new HFNode;
 		size = v.size();
-		t2->c = v[size - 1].c;
-		t2->weight = v[size - 1].weight;
+		t2 = v[size - 1];
+		//t2->c = v[size - 1]->c;
+		//t2->weight = v[size - 1]->weight;
 		t2->code = 0;
-		t2->lchild = v[size - 1].lchild;
-		t2->rchild = v[size - 1].rchild;
+		//t2->lchild = v[size - 1]->lchild;
+		//t2->rchild = v[size - 1]->rchild;
 		v.pop_back();
-		HFNode *t3 = new HFNode;
-		t3->c = '@';
+		HFNode* t3 = new HFNode;
+		t3->c = NOTLEAFNODE;
 		t3->code = 1;
-		t3->weight = t1->weight+t2->weight;
+		t3->weight = t1->weight + t2->weight;
 		t3->lchild = t2;
 		t3->rchild = t1;
 		root = t3;
@@ -91,15 +134,15 @@ void buildHFTree() {
 	while (v.size()) {
 		int size = v.size();
 		HFNode* t1;
-		t1 = new HFNode;
-		t1->c = v[size - 1].c;
+		t1 = v[size - 1];
+		//t1->c = v[size - 1]->c;
 		t1->code = 0;
-		t1->weight = v[size - 1].weight;
-		t1->lchild = v[size - 1].lchild;
-		t1->rchild = v[size - 1].rchild;
+		//t1->weight = v[size - 1]->weight;
+		//t1->lchild = v[size - 1]->lchild;
+		//t1->rchild = v[size - 1]->rchild;
 		v.pop_back();
 		HFNode* t3 = new HFNode;
-		t3->c = '@';
+		t3->c = NOTLEAFNODE;
 		t3->code = 1;
 		t3->weight = t1->weight + root->weight;
 		t3->lchild = t1;
@@ -109,12 +152,12 @@ void buildHFTree() {
 }
 void preorder(HFNode* t) {
 	if (t) {
-		cout << *t;
+		cout << t;
 		preorder(t->lchild);
 		preorder(t->rchild);
 	}
 }
-char encode[16] = { 0 };
+char encode[256] = { 0 };
 char* hf_encode(char key) {
 	if (root == NULL)
 		return NULL;
@@ -127,9 +170,9 @@ char* hf_encode(char key) {
 	while (!s.empty() || p) {
 		while (p) {
 			s.push(p);
-			if(p->lchild)
+			if (p->lchild)
 				parent[p->lchild] = p;
-			p = p->lchild;			
+			p = p->lchild;
 		}
 		if (!s.empty()) {
 			p = s.top();
@@ -138,16 +181,20 @@ char* hf_encode(char key) {
 			if (p->c == key) {
 				//cout << "key:" << key<<" ";
 				stack<int> code_stack;
-				while (p!=root) {
+				while (p != root) {
 					code_stack.push(p->code);
 					p = parent[p];
 				}
 				while (!code_stack.empty()) {
 					//cout << code_stack.top() << " ";
-					sprintf(encode,"%s%d",encode, code_stack.top());					
+					sprintf(encode, "%s%d", encode, code_stack.top());
 					code_stack.pop();
 				}
 				//cout << endl;
+				//cout << "encode " << key << endl;
+				encode_m[key] = string(encode);
+				//encode_m.insert( make_pair( key, string(encode) ) );
+				decode_m[string(encode)] =key ;
 				return encode;
 				break;
 			}
@@ -226,9 +273,8 @@ int main()
 	readData();
 	buildHFTree();
 	preorder(root);
-	for(char i='a';i<'z';i++)
-		hf_encode(i);
 	printRootToLeaf(root);
 	encodeData();
-    //std::cout << "Hello World!\n";
+	decodeData();
+	//std::cout << "Hello World!\n";
 }
