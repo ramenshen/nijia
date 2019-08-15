@@ -530,6 +530,17 @@ vector<int> iv;
 
    ```cpp
    TYPE accumulate( iterator start, iterator end, TYPE val, BinaryFunction f );
+   
+   class PS{
+    public:
+           int operator()(int t1,const student& t2)
+           {
+               return (t1 + t2.bonus);
+           }
+   };
+   
+   accumulate(sv.begin(),sv.end(),0,PS())
+   
    ```
 
    
@@ -538,6 +549,13 @@ vector<int> iv;
 
    ```cpp
    iterator find_if( iterator start, iterator end, UnPred up );
+   
+   bool greater90( const student& i )
+   {
+      return (i.chinese+i.math+i*english) > 3*90;
+   }
+   location = std::find_if( sv.begin(), sv.end(), greater90 );
+   
    ```
 
    
@@ -548,6 +566,12 @@ vector<int> iv;
    const TYPE& max( const TYPE& x, const TYPE& y, BinPred p );
    iterator search( iterator start1, iterator end1, iterator start2, iterator end2, BinPred p );
    const TYPE& min( const TYPE& x, const TYPE& y, BinPred p );
+   
+   
+   bool cmp_chinses(const student& a, const studnet& b) {
+   	return a.chinses > b.chinses;
+   }
+   max(sv.begin(),sv.end(),cmp_chinses);
    ```
 
    
@@ -556,6 +580,12 @@ vector<int> iv;
 
    ```cpp
    size_t count_if( iterator start, iterator end, UnaryPred p );
+   
+   bool greater90( const student& i )
+   {
+      return (i.chinese+i.math+i*english) > 3*90;
+   }
+   count_if( sv.begin(), sv.end(), greater90 );
    ```
 
    
@@ -564,6 +594,12 @@ vector<int> iv;
 
    ```cpp
    void stable_sort( iterator start, iterator end, StrictWeakOrdering cmp );
+   
+   bool cmp_age(const student& a,const student& b){
+   	return a.age>b.age; 
+   }
+   
+   stable_sort(sv.begin(),sv.end(),cmp_age);
    ```
 
    
@@ -580,6 +616,12 @@ vector<int> iv;
 
    ```cpp
    iterator remove_if( iterator start, iterator end, Predicate p );
+   
+   bool less90( const student& i )
+   {
+      return (i.chinese+i.math+i*english) < 3*90;
+   }
+   remove_if( sv.begin(), sv.end(), less90 );
    ```
 
    
