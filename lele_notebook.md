@@ -525,14 +525,32 @@ vector<int> iv;
     for_each (sv.begin(), sv.end(), myobject());
     for_each (sv.begin(), sv.end(), myout());
     ```
+4. Unpred
 
-    
+   ```cpp
+   iterator find_if( iterator start, iterator end, UnPred up );
+   size_t count_if( iterator start, iterator end, UnaryPred p );
+   iterator remove_if( iterator start, iterator end, Predicate p );
+   
+   bool greater90( const student& i )
+   {
+      return (i.chinese+i.math+i*english) > 3*90;
+   }
+   location = std::find_if( sv.begin(), sv.end(), greater90 );
+   count_if( sv.begin(), sv.end(), greater90 );
+   
+   bool less90( const student& i )
+   {
+      return (i.chinese+i.math+i*english) < 3*90;
+   }
+   remove_if( sv.begin(), sv.end(), less90 );
+   ```
 
 1. BinaryFunction 
 
    ```cpp
    TYPE accumulate( iterator start, iterator end, TYPE val, BinaryFunction f );
-   
+   iterator partial_sum( iterator start, iterator end, iterator result, BinOp p );
    class PS{
     public:
            int operator()(int t1,const student& t2)
@@ -543,6 +561,10 @@ vector<int> iv;
    
    accumulate(sv.begin(),sv.end(),0,PS())
    
+   int myop(int x,int y){
+       return x*y;
+   }
+   partial_sum(iv.begin(),iv.end(),result,myop);//求部分阶乘
    ```
 
 2. BinPred
@@ -561,48 +583,6 @@ vector<int> iv;
    max(sv.begin(),sv.end(),cmp_chinses);
    ```
 
-3. BinOp 
-
-   ```cpp
-   iterator partial_sum( iterator start, iterator end, iterator result, BinOp p );
-   
-   int myop(int x,int y){
-       return x*y;
-   }
-   partial_sum(iv.begin(),iv.end(),result,myop);//求部分阶乘
-   ```
-4. Unpred
-
-   ```cpp
-   iterator find_if( iterator start, iterator end, UnPred up );
-   size_t count_if( iterator start, iterator end, UnaryPred p );
-   
-   bool greater90( const student& i )
-   {
-      return (i.chinese+i.math+i*english) > 3*90;
-   }
-   location = std::find_if( sv.begin(), sv.end(), greater90 );
-   
-   bool greater90( const student& i )
-   {
-      return (i.chinese+i.math+i*english) > 3*90;
-   }
-   count_if( sv.begin(), sv.end(), greater90 );
-   
-   ```
-
-7. Predicate
-
-   ```cpp
-   iterator remove_if( iterator start, iterator end, Predicate p );
-   
-   bool less90( const student& i )
-   {
-      return (i.chinese+i.math+i*english) < 3*90;
-   }
-   remove_if( sv.begin(), sv.end(), less90 );
-   ```
-   
 5. StrictWeakOrdering 
 
    ```cpp
@@ -615,7 +595,15 @@ vector<int> iv;
    stable_sort(sv.begin(),sv.end(),cmp_age);
    ```
 
-  
+  ### cout 中小数设置精度
+
+```cpp
+float total = 1.23456;
+cout.setf(ios::fixed);
+cout<<setprecision(2)<<total<<endl;//保留小数后2位
+```
+
+
 
 
 
