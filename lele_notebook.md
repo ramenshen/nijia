@@ -602,9 +602,18 @@ float total = 1.23456;
 cout.setf(ios::fixed);
 cout<<setprecision(2)<<total<<endl;//保留小数后2位
 ```
-
-
-
-
+### 计算代码块运行时间
+```cpp
+#include <ctime>
+int main(){
+  clock_t start,end;
+  start=clock();
+  /*
+    代码块
+  */
+  end=clock();
+  printf("%.5lfms\n",(double)(end-start)/CLOCKS_PER_SEC*1000);
+  return 0;
+}
 
  
