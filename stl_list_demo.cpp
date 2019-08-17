@@ -48,7 +48,7 @@ int main() {
 	std::cout << "sum is "<<sum<< '\n';
 	int max = 0;
 	for(int j=1; j<=lt.size(); j++) {
-		for(int i=0; i<=lt.size(); i++) {
+		for(int i=0; i<lt.size(); i++) {
 			if((i+j)<=lt.size()) {
 				list<int>::iterator it_b=lt.begin();
 				list<int>::iterator it_e=lt.begin();
@@ -84,5 +84,10 @@ int main() {
     cout<<"using my struct greater...."<<endl;
     std::nth_element(v.begin(), v.begin()+1, v.end(), my_struct_greater());
     std::cout << "The second largest element is " << v[1] << '\n';
-    
+   
+	cout<<"using copy......"<<endl;
+	vector<int> bv;
+	copy(v.begin(),v.end(),back_inserter(bv));
+	for_each(bv.begin(),bv.end(),list_print);
+
 }
