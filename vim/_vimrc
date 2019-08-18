@@ -1,0 +1,366 @@
+source $VIMRUNTIME/vimrc_example.vim
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+set guifont=Consolas:h13
+colorscheme sublimemonokai
+
+
+" Startup {{{
+filetype indent plugin on
+
+
+" vim 文件折叠方式为 marker
+augroup ft_vim
+    au!
+
+    au FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" General {{{
+set nocompatible
+set nobackup
+set noswapfile
+set history=1024
+set autochdir
+set whichwrap=b,s,<,>,[,]
+set nobomb
+set backspace=indent,eol,start whichwrap+=<,>,[,]
+" Vim 的默认寄存器和系统剪贴板共享
+set clipboard+=unnamed
+" 设置 alt 键不映射到菜单栏
+set winaltkeys=no
+" }}}
+
+" GUI {{{
+
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+set cursorline
+set hlsearch
+set number
+" 窗口大小
+set lines=35 columns=140
+" 分割出来的窗口位于当前窗口下边/右边
+set splitbelow
+set splitright
+"不显示工具/菜单栏
+set guioptions-=T
+set guioptions-=m
+set guioptions-=L
+set guioptions-=r
+set guioptions-=b
+" 使用内置 tab 样式而不是 gui
+set guioptions-=e
+set nolist
+" }}}
+
+
+" Format {{{
+set autoindent
+set smartindent
+set tabstop=4
+set expandtab
+set softtabstop=4
+set foldmethod=indent
+syntax on
+" }}}
+
+
+" Keymap {{{
+let mapleader=","
+
+nmap <leader>s :source $VIM/_vimrc<cr>
+nmap <leader>e :e $VIM/_vimrc<cr>
+
+map <leader>tn :tabnew<cr>
+map <leader>tc :tabclose<cr>
+map <leader>th :tabp<cr>
+map <leader>tl :tabn<cr>
+
+" 移动分割窗口
+nmap <C-j> <C-W>j
+nmap <C-k> <C-W>k
+nmap <C-h> <C-W>h
+nmap <C-l> <C-W>l
+
+" 正常模式下 alt+j,k,h,l 调整分割窗口大小
+nnoremap <M-j> :resize +5<cr>
+nnoremap <M-k> :resize -5<cr>
+nnoremap <M-h> :vertical resize -5<cr>
+nnoremap <M-l> :vertical resize +5<cr>
+
+" 插入模式移动光标 alt + 方向键
+inoremap <M-j> <Down>
+inoremap <M-k> <Up>
+inoremap <M-h> <left>
+inoremap <M-l> <Right>
+
+" IDE like delete
+inoremap <C-BS> <Esc>bdei
+
+nnoremap vv ^vg_
+" 转换当前行为大写
+inoremap <C-u> <esc>mzgUiw`za
+" 命令模式下的行首尾
+cnoremap <C-a> <home>
+cnoremap <C-e> <end>
+
+nnoremap <F2> :setlocal number!<cr>
+nnoremap <leader>w :set wrap!<cr>
+
+imap <C-v> "+gP
+vmap <C-c> "+y
+vnoremap <BS> d
+vnoremap <C-C> "+y
+vnoremap <C-Insert> "+y
+imap <C-V>        "+gP
+map <S-Insert>        "+gP
+cmap <C-V>        <C-R>+
+cmap <S-Insert>        <C-R>+
+
+exe 'inoremap <script> <C-V>' paste#paste_cmd['i']
+exe 'vnoremap <script> <C-V>' paste#paste_cmd['v']
+
+" 打开当前目录 windows
+map <leader>ex :!start explorer %:p:h<CR>
+
+" 打开当前目录CMD
+map <leader>cmd :!start<cr>
+" 打印当前时间
+map <F3> a<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc>
+
+" 复制当前文件/路径到剪贴板
+nmap ,fn :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
+nmap ,fp :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+
+" 设置切换Buffer快捷键"
+nnoremap <C-left> :bn<CR>
+nnoremap <C-right> :bp<CR>
+
+" }}}
+
+"------------------------------------------------------------------------------
+"  < 判斷作業系統是否是 Windows 還是 Linux >
+"------------------------------------------------------------------------------
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+    let g:iswindows = 1
+else
+    let g:iswindows = 0
+endif
+ 
+"------------------------------------------------------------------------------
+"  < 判斷是終端還是 Gvim >
+"------------------------------------------------------------------------------
+if has("gui_running")
+    let g:isGUI = 1
+else
+    let g:isGUI = 0
+endif
+ 
+"------------------------------------------------------------------------------
+"  < 編譯、連線、執行配置 >
+"------------------------------------------------------------------------------
+" F9 一鍵儲存、編譯、連線存並執行
+map <F9> :call Run()<CR>
+imap <F9> <ESC>:call Run()<CR>
+ 
+" Ctrl + F9 一鍵儲存並編譯
+map <c-F9> :call Compile()<CR>
+imap <c-F9> <ESC>:call Compile()<CR>
+ 
+" Ctrl + F10 一鍵儲存並連線
+map <c-F10> :call Link()<CR>
+imap <c-F10> <ESC>:call Link()<CR>
+ 
+let s:LastShellReturn_C = 0
+let s:LastShellReturn_L = 0
+let s:ShowWarning = 1
+let s:Obj_Extension = '.o'
+let s:Exe_Extension = '.exe'
+let s:Sou_Error = 0
+ 
+let s:windows_CFlags = 'gcc\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
+let s:linux_CFlags = 'gcc\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
+ 
+let s:windows_CPPFlags = 'g++\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
+let s:linux_CPPFlags = 'g++\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
+ 
+func! Compile()
+    exe ":ccl"
+    exe ":update"
+    if expand("%:e") == "c" || expand("%:e") == "cpp" || expand("%:e") == "cxx"
+        let s:Sou_Error = 0
+        let s:LastShellReturn_C = 0
+        let Sou = expand("%:p")
+        let Obj = expand("%:p:r").s:Obj_Extension
+        let Obj_Name = expand("%:p:t:r").s:Obj_Extension
+        let v:statusmsg = ''
+        if !filereadable(Obj) || (filereadable(Obj) && (getftime(Obj) < getftime(Sou)))
+            redraw!
+            if expand("%:e") == "c"
+                if g:iswindows
+                    exe ":setlocal makeprg=".s:windows_CFlags
+                else
+                    exe ":setlocal makeprg=".s:linux_CFlags
+                endif
+                echohl WarningMsg | echo " compiling..."
+                silent make
+            elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
+                if g:iswindows
+                    exe ":setlocal makeprg=".s:windows_CPPFlags
+                else
+                    exe ":setlocal makeprg=".s:linux_CPPFlags
+                endif
+                echohl WarningMsg | echo " compiling..."
+                silent make
+            endif
+            redraw!
+            if v:shell_error != 0
+                let s:LastShellReturn_C = v:shell_error
+            endif
+            if g:iswindows
+                if s:LastShellReturn_C != 0
+                    exe ":bo cope"
+                    echohl WarningMsg | echo " compilation failed"
+                else
+                    if s:ShowWarning
+                        exe ":bo cw"
+                    endif
+                    echohl WarningMsg | echo " compilation successful"
+                endif
+            else
+                if empty(v:statusmsg)
+                    echohl WarningMsg | echo " compilation successful"
+                else
+                    exe ":bo cope"
+                endif
+            endif
+        else
+            echohl WarningMsg | echo ""Obj_Name"is up to date"
+        endif
+    else
+        let s:Sou_Error = 1
+        echohl WarningMsg | echo " please choose the correct source file"
+    endif
+    exe ":setlocal makeprg=make"
+endfunc
+ 
+func! Link()
+    call Compile()
+    if s:Sou_Error || s:LastShellReturn_C != 0
+        return
+    endif
+    let s:LastShellReturn_L = 0
+    let Sou = expand("%:p")
+    let Obj = expand("%:p:r").s:Obj_Extension
+    if g:iswindows
+        let Exe = expand("%:p:r").s:Exe_Extension
+        let Exe_Name = expand("%:p:t:r").s:Exe_Extension
+    else
+        let Exe = expand("%:p:r")
+        let Exe_Name = expand("%:p:t:r")
+    endif
+    let v:statusmsg = ''
+    if filereadable(Obj) && (getftime(Obj) >= getftime(Sou))
+        redraw!
+        if !executable(Exe) || (executable(Exe) && getftime(Exe) < getftime(Obj))
+            if expand("%:e") == "c"
+                setlocal makeprg=gcc\ -o\ %<\ %<.o
+                echohl WarningMsg | echo " linking..."
+                silent make
+            elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
+                setlocal makeprg=g++\ -o\ %<\ %<.o
+                echohl WarningMsg | echo " linking..."
+                silent make
+            endif
+            redraw!
+            if v:shell_error != 0
+                let s:LastShellReturn_L = v:shell_error
+            endif
+            if g:iswindows
+                if s:LastShellReturn_L != 0
+                    exe ":bo cope"
+                    echohl WarningMsg | echo " linking failed"
+                else
+                    if s:ShowWarning
+                        exe ":bo cw"
+                    endif
+                    echohl WarningMsg | echo " linking successful"
+                endif
+            else
+                if empty(v:statusmsg)
+                    echohl WarningMsg | echo " linking successful"
+                else
+                    exe ":bo cope"
+                endif
+            endif
+        else
+            echohl WarningMsg | echo ""Exe_Name"is up to date"
+        endif
+    endif
+    setlocal makeprg=make
+endfunc
+ 
+func! Run()
+    let s:ShowWarning = 0
+    call Link()
+    let s:ShowWarning = 1
+    if s:Sou_Error || s:LastShellReturn_C != 0 || s:LastShellReturn_L != 0
+        return
+    endif
+    let Sou = expand("%:p")
+    let Obj = expand("%:p:r").s:Obj_Extension
+    if g:iswindows
+        let Exe = expand("%:p:r").s:Exe_Extension
+    else
+        let Exe = expand("%:p:r")
+    endif
+    if executable(Exe) && getftime(Exe) >= getftime(Obj) && getftime(Obj) >= getftime(Sou)
+        redraw!
+        echohl WarningMsg | echo " running..."
+        if g:iswindows
+            exe ":!%<.exe"
+        else
+            if g:isGUI
+                exe ":!gnome-terminal -e ./%<"
+            else
+                exe ":!./%<"
+            endif
+        endif
+        redraw!
+        echohl WarningMsg | echo " running finish"
+    endif
+endfunc
