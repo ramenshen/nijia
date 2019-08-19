@@ -72,6 +72,7 @@ void search(int level, int col, int row) {
 }
 #endif
 int main() {
+	int max_house = -2147483648;
 	freopen("data.in","r",stdin);
 	scanf("%d", &n);
 	for (int i = 0; i < n; i++) {
