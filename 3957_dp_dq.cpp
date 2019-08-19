@@ -1,6 +1,6 @@
-#include <iostream>
-#include <queue>
-#include <algorithm>
+#include<iostream>
+#include<queue>
+#include<algorithm>
 #include<stdio.h>
 #include<limits.h>
 using namespace std;
@@ -68,7 +68,6 @@ int isOk(int m) {
 				} else {
 					continue;
 				}
-
 			}
 		}
 #endif
