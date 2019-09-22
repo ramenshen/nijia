@@ -1057,3 +1057,67 @@ void find_circuit(int i){//从i点出发
 }
 ```
 
+### 归并排序
+
+```cpp
+void mergesort(int s,int t){
+    if(s==t)
+        return;
+    int mid=(s+t)/2;
+    mergesort(s,mid);
+    mergesort(mid+1,t);
+    int i=s;
+    int j=mid+1;
+    int k=s;
+    while(i<=mid&&j<=t){
+        if(a[i]<=a[j]){
+            r[k]=a[i];
+            k++;
+            i++;
+        }else{
+            r[k]=a[j];
+            k++;
+            j++;
+        }
+    }
+    while(i<=mid){
+         r[k]=a[i];
+         k++;
+         i++;
+    }
+     while(j<=t){
+         r[k]=a[j];
+         k++;
+         j++;
+    }
+    for(int i=s;i<t;i++){
+        a[i]=r[i];
+    }
+}
+```
+
+### 快速排序
+
+```cpp
+void qsort(int l,int r){
+    int i,j,mid,p;
+    i=l;
+    j=r;
+    mid=a[(l+r)/2];
+    do{
+        while(a[i]<=mid)
+            i++;
+        while(a[j]>=mid)
+            j--;
+        if(i<=j){
+            swap(a[i],a[j);
+            i++;
+            j--;
+        }
+    }while(i<=j);
+    if(l<j) qsort(l,j);
+    if(i<r) qsort(i,r);
+    
+}
+```
+
